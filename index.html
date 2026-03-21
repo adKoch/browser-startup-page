@@ -48,8 +48,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      padding: 40px 24px;
+      gap: 12px;
+      padding: 24px 16px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 20px;
@@ -65,13 +65,13 @@
     }
 
     .media-card img {
-      width: 96px;
-      height: 96px;
-      border-radius: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
     }
 
     .media-card span {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 500;
       text-align: center;
       opacity: 0.9;
@@ -80,32 +80,32 @@
     /* Bookmarks Section */
     .bookmarks-section {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 13px;
     }
 
     .bookmark-group {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
-      padding: 20px;
+      padding: 32px;
       backdrop-filter: blur(12px);
     }
 
     .bookmark-group h3 {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       opacity: 0.45;
-      margin-bottom: 14px;
+      margin-bottom: 19px;
     }
 
     .bookmark-link {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 0;
+      gap: 13px;
+      padding: 11px 0;
       text-decoration: none;
       color: #fff;
       opacity: 0.85;
@@ -127,9 +127,9 @@
     }
 
     .bookmark-link img {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
       flex-shrink: 0;
     }
 
@@ -257,18 +257,23 @@
         document.body.style.backgroundImage = `url(${config.background_image})`;
       }
 
-      if (config.enable_media_page) {
-        app.appendChild(renderMedia());
-      }
+      const mediaPos = config.media_position || 'none';
+      const hasMedia = mediaPos !== 'none';
+      const hasBookmarks = config.bookmarks?.length;
 
-      if (config.bookmarks?.length) {
-        if (config.enable_media_page) {
-          const divider = document.createElement('div');
-          divider.className = 'section-divider';
-          app.appendChild(divider);
-        }
+      const divider = () => {
+        const d = document.createElement('div');
+        d.className = 'section-divider';
+        return d;
+      };
+
+      if (hasMedia && mediaPos === 'top') app.appendChild(renderMedia());
+      if (hasBookmarks) {
+        if (hasMedia && mediaPos === 'top') app.appendChild(divider());
         app.appendChild(renderBookmarks(config.bookmarks));
+        if (hasMedia && mediaPos === 'bottom') app.appendChild(divider());
       }
+      if (hasMedia && mediaPos === 'bottom') app.appendChild(renderMedia());
     }
 
     main();

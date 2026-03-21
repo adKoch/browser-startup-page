@@ -1,11 +1,27 @@
 background_image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&q=80"
 
-enable_media_page: true
+media_position: top
 
 bookmarks:
-  - name: "More"
+  - name: "Entertainment"
     links:
       - title: "Reddit"
         url: "https://www.reddit.com"
       - title: "YouTube Music"
         url: "https://music.youtube.com"
+      - title: "SoundCloud"
+        url: "https://soundcloud.com"
+      - title: "Bandcamp"
+        url: "https://bandcamp.com"
+      - title: "IMDb"
+        url: "https://www.imdb.com"
+      - title: "Letterboxd"
+        url: "https://letterboxd.com"
+      - title: "Goodreads"
+        url: "https://www.goodreads.com"
+      - title: "AniList"
+        url: "https://anilist.co"
+      - title: "MyAnimeList"
+        url: "https://myanimelist.net"
+      - title: "Trakt"
+        url: "https://trakt.tv"
