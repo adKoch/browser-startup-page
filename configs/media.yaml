@@ -1,0 +1,11 @@
+background_image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&q=80"
+
+enable_media_page: true
+
+bookmarks:
+  - name: "More"
+    links:
+      - title: "Reddit"
+        url: "https://www.reddit.com"
+      - title: "YouTube Music"
+        url: "https://music.youtube.com"
