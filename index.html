@@ -34,14 +34,149 @@
       position: relative;
       z-index: 1;
       padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
     }
 
-    /* Media Section */
+    /* Clock */
+    .clock-section {
+      text-align: center;
+    }
+
+    .clock-time {
+      font-size: 80px;
+      font-weight: 200;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .clock-date {
+      font-size: 16px;
+      opacity: 0.55;
+      margin-top: 10px;
+    }
+
+    /* Current Weather */
+    .weather-section {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 32px 40px;
+      backdrop-filter: blur(6px);
+    }
+
+    .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .weather-icon-large {
+      font-size: 56px;
+      line-height: 1;
+    }
+
+    .weather-temp-large {
+      font-size: 52px;
+      font-weight: 200;
+      line-height: 1;
+    }
+
+    .weather-desc-main {
+      font-size: 18px;
+      opacity: 0.6;
+      margin-left: 4px;
+    }
+
+    .weather-details {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+    }
+
+    .weather-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      padding-right: 24px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      margin-right: 24px;
+    }
+
+    .weather-detail:last-child {
+      border-right: none;
+      margin-right: 0;
+      padding-right: 0;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.45;
+    }
+
+    .detail-value {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    /* Forecast */
+    .forecast-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .forecast-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .forecast-day {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.45;
+    }
+
+    .forecast-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .forecast-temps {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    .forecast-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .forecast-detail {
+      font-size: 13px;
+      opacity: 0.6;
+    }
+
+    /* Media */
     .media-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      margin-bottom: 48px;
     }
 
     .media-card {
@@ -56,7 +191,7 @@
       text-decoration: none;
       color: #fff;
       transition: background 0.2s, transform 0.2s;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(6px);
     }
 
     .media-card:hover {
@@ -77,7 +212,7 @@
       opacity: 0.9;
     }
 
-    /* Bookmarks Section */
+    /* Bookmarks */
     .bookmarks-section {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -89,7 +224,7 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       padding: 32px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(6px);
     }
 
     .bookmark-group h3 {
@@ -137,12 +272,6 @@
       font-size: 14px;
     }
 
-    .section-divider {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.1);
-      margin-bottom: 40px;
-    }
-
     .error {
       padding: 2rem;
       color: #ff6b6b;
@@ -170,9 +299,107 @@
       { name: 'Apple TV',    url: 'https://tv.apple.com' },
     ];
 
+    function weatherEmoji(code) {
+      if (code === 0)  return ['☀️',  'Clear'];
+      if (code <= 3)   return ['⛅',  'Partly cloudy'];
+      if (code <= 48)  return ['🌫️', 'Foggy'];
+      if (code <= 67)  return ['🌧️', 'Rain'];
+      if (code <= 77)  return ['🌨️', 'Snow'];
+      if (code <= 82)  return ['🌧️', 'Showers'];
+      if (code <= 86)  return ['🌨️', 'Snow showers'];
+      return                  ['⛈️',  'Thunderstorm'];
+    }
+
     function faviconUrl(url) {
       const domain = new URL(url).hostname;
       return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    }
+
+    function renderClock(timezone) {
+      const section = document.createElement('div');
+      section.className = 'clock-section';
+
+      const time = document.createElement('div');
+      time.className = 'clock-time';
+
+      const date = document.createElement('div');
+      date.className = 'clock-date';
+
+      section.append(time, date);
+
+      const opts = timezone ? { timeZone: timezone } : {};
+      const update = () => {
+        const now = new Date();
+        time.textContent = now.toLocaleTimeString([], { ...opts, hour: '2-digit', minute: '2-digit' });
+        date.textContent = now.toLocaleDateString([], { ...opts, weekday: 'long', day: 'numeric', month: 'long' });
+      };
+      update();
+      setInterval(update, 1000);
+
+      return section;
+    }
+
+    function renderWeatherSection(current) {
+      const { temperature_2m, apparent_temperature, relative_humidity_2m, precipitation, weather_code, is_day } = current;
+      const [emoji, desc] = weatherEmoji(weather_code);
+
+      const section = document.createElement('div');
+      section.className = 'weather-section';
+      section.innerHTML = `
+        <div class="weather-main">
+          <div class="weather-icon-large">${emoji}</div>
+          <div class="weather-temp-large">${Math.round(temperature_2m)}°C</div>
+          <div class="weather-desc-main">${desc}</div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">
+            <span class="detail-label">Feels like</span>
+            <span class="detail-value">${Math.round(apparent_temperature)}°C</span>
+          </div>
+          <div class="weather-detail">
+            <span class="detail-label">Humidity</span>
+            <span class="detail-value">${relative_humidity_2m}%</span>
+          </div>
+          <div class="weather-detail">
+            <span class="detail-label">Rain</span>
+            <span class="detail-value">${precipitation} mm</span>
+          </div>
+          <div class="weather-detail">
+            <span class="detail-label">Time of day</span>
+            <span class="detail-value">${is_day ? '☀️ Day' : '🌙 Night'}</span>
+          </div>
+        </div>
+      `;
+      return section;
+    }
+
+    function renderForecastSection(daily, timezone) {
+      const section = document.createElement('div');
+      section.className = 'forecast-section';
+
+      for (let i = 1; i <= 3; i++) {
+        const date = new Date(daily.time[i] + 'T12:00:00');
+        const tzOpts = timezone ? { timeZone: timezone } : {};
+        const dayName = i === 1
+          ? 'Tomorrow'
+          : date.toLocaleDateString([], { ...tzOpts, weekday: 'long' });
+        const [emoji] = weatherEmoji(daily.weather_code[i]);
+
+        const card = document.createElement('div');
+        card.className = 'forecast-card';
+        card.innerHTML = `
+          <div class="forecast-day">${dayName}</div>
+          <div class="forecast-icon">${emoji}</div>
+          <div class="forecast-temps">${Math.round(daily.temperature_2m_max[i])}° / ${Math.round(daily.temperature_2m_min[i])}°</div>
+          <div class="forecast-details">
+            <div class="forecast-detail">💧 Rain ${daily.precipitation_probability_max[i]}%</div>
+            <div class="forecast-detail">🌡️ Feels ${Math.round(daily.apparent_temperature_max[i])}° / ${Math.round(daily.apparent_temperature_min[i])}°</div>
+          </div>
+        `;
+        section.appendChild(card);
+      }
+
+      return section;
     }
 
     function renderMedia() {
@@ -239,13 +466,14 @@
     }
 
     async function main() {
-      const param = new URLSearchParams(location.search).get('config') || 'default';
+      const params = new URLSearchParams(location.search);
+      const param = params.get('config') || 'default';
       const configName = CONFIGS.includes(param) ? param : 'default';
       const app = document.getElementById('app');
 
       let config;
       try {
-        const res = await fetch(`configs/${configName}.yaml`);
+        const res = await fetch(`configs/${configName}.yaml?v=${Date.now()}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         config = jsyaml.load(await res.text());
       } catch (e) {
@@ -257,23 +485,45 @@
         document.body.style.backgroundImage = `url(${config.background_image})`;
       }
 
-      const mediaPos = config.media_position || 'none';
-      const hasMedia = mediaPos !== 'none';
-      const hasBookmarks = config.bookmarks?.length;
+      const sections = config.sections || ['media', 'bookmarks'];
+      const lat = params.get('lat');
+      const lon = params.get('lon');
 
-      const divider = () => {
-        const d = document.createElement('div');
-        d.className = 'section-divider';
-        return d;
-      };
-
-      if (hasMedia && mediaPos === 'top') app.appendChild(renderMedia());
-      if (hasBookmarks) {
-        if (hasMedia && mediaPos === 'top') app.appendChild(divider());
-        app.appendChild(renderBookmarks(config.bookmarks));
-        if (hasMedia && mediaPos === 'bottom') app.appendChild(divider());
+      let weatherData = null;
+      const needsWeather = (sections.includes('weather') || sections.includes('forecast')) && lat && lon;
+      if (needsWeather) {
+        try {
+          const res = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+            `&current=temperature_2m,weather_code,apparent_temperature,relative_humidity_2m,precipitation,is_day` +
+            `&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,weather_code,precipitation_probability_max` +
+            `&temperature_unit=celsius&timezone=auto&forecast_days=4`
+          );
+          weatherData = await res.json();
+        } catch {
+          // weather unavailable, sections will be skipped
+        }
       }
-      if (hasMedia && mediaPos === 'bottom') app.appendChild(renderMedia());
+
+      for (const section of sections) {
+        switch (section) {
+          case 'clock':
+            app.appendChild(renderClock(config.timezone));
+            break;
+          case 'weather':
+            if (weatherData) app.appendChild(renderWeatherSection(weatherData.current));
+            break;
+          case 'forecast':
+            if (weatherData) app.appendChild(renderForecastSection(weatherData.daily, config.timezone));
+            break;
+          case 'media':
+            app.appendChild(renderMedia());
+            break;
+          case 'bookmarks':
+            if (config.bookmarks?.length) app.appendChild(renderBookmarks(config.bookmarks));
+            break;
+        }
+      }
     }
 
     main();

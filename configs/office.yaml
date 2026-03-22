@@ -1,19 +1,40 @@
-background_image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+background_image: "hidden_king.jpg"
+timezone: "Europe/Berlin"
 
-media_position: bottom
+sections:
+  - clock
+  - bookmarks
+  - forecast
+  - media
 
 bookmarks:
-  - name: "Work"
+  - name: "Dev"
     links:
-      - title: "GitHub"
+      - title: "Github"
         url: "https://github.com"
+      - title: "Gitlab"
+        url: "https://gitlab.com/"
+  - name: "Ai"
+    links:
+      - title: "Claude"
+        url: "https://claude.ai/"
+      - title: "Gemini"
+        url: "https://gemini.google.com/app"
+  - name: "Google"
+    links:
       - title: "Gmail"
         url: "https://mail.google.com"
       - title: "Google Calendar"
         url: "https://calendar.google.com"
-  - name: "Reference"
+  - name: "Listen"
     links:
-      - title: "MDN Web Docs"
-        url: "https://developer.mozilla.org"
-      - title: "Stack Overflow"
-        url: "https://stackoverflow.com"
+      - title: "Audible"
+        url: "https://www.audible.co.uk"
+      - title: "Spotify"
+        url: "https://open.spotify.com"
+  - name: "Other"
+    links:
+      - title: "Allegro"
+        url: "https://allegro.pl/"
+      - title: "Cronometer"
+        url: "https://cronometer.com/"
