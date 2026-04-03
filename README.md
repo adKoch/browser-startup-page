@@ -29,17 +29,9 @@ Switch configs via the `?config=` query parameter. Available configs: `default`,
 
 ## Weather
 
-Add `lat` and `lon` parameters to enable weather and forecast sections.
-
-```
-http://localhost:8080?config=default&lat=52.52&lon=13.41
-http://localhost:8080?config=media&lat=48.85&lon=2.35
-http://localhost:8080?config=office&lat=51.51&lon=-0.13
-```
+When a config includes `weather` or `forecast` sections, the browser will request your location using the Geolocation API. Allow the permission prompt to enable weather.
 
 Weather data is fetched from [Open-Meteo](https://open-meteo.com/) (free, no API key required).
-
-To find your coordinates: right-click any location on [Google Maps](https://maps.google.com) and copy the lat/lon from the popup.
 
 ## Config Format
 
@@ -69,8 +61,8 @@ bookmarks:
 |---------|-------------|
 | `clock` | Live clock and date |
 | `media` | Streaming service shortcuts (YouTube, Netflix, Spotify, etc.) |
-| `weather` | Current conditions — requires `lat`/`lon` URL params |
-| `forecast` | 3-day forecast — requires `lat`/`lon` URL params |
+| `weather` | Current conditions — requests browser location permission |
+| `forecast` | 3-day forecast — requests browser location permission |
 | `bookmarks` | Bookmark groups defined in the config |
 
 ### Background Image
