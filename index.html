@@ -487,13 +487,21 @@
       }
 
       const sections = config.sections || ['media', 'bookmarks'];
-      const lat = params.get('lat');
-      const lon = params.get('lon');
 
       let weatherData = null;
-      const needsWeather = (sections.includes('weather') || sections.includes('forecast')) && lat && lon;
+      const needsWeather = sections.includes('weather') || sections.includes('forecast');
       if (needsWeather) {
         try {
+          const { latitude: lat, longitude: lon } = await new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+              reject(new Error('Geolocation not supported'));
+              return;
+            }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve(pos.coords),
+              (err) => reject(err)
+            );
+          });
           const res = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
             `&current=temperature_2m,weather_code,apparent_temperature,relative_humidity_2m,precipitation,is_day` +
@@ -502,7 +510,7 @@
           );
           weatherData = await res.json();
         } catch {
-          // weather unavailable, sections will be skipped
+          // weather unavailable (permission denied or API error), sections will be skipped
         }
       }
 
