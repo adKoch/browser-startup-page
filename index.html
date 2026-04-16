@@ -145,6 +145,14 @@
       display: flex;
       flex-direction: column;
       gap: clamp(4px, 1vh, 10px);
+      text-decoration: none;
+      color: #fff;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .forecast-card:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-4px);
     }
 
     .forecast-day {
@@ -377,7 +385,7 @@
       return section;
     }
 
-    function renderForecastSection(daily, timezone) {
+    function renderForecastSection(daily, timezone, lat, lon) {
       const section = document.createElement('div');
       section.className = 'forecast-section';
 
@@ -389,8 +397,11 @@
           : date.toLocaleDateString([], { ...tzOpts, weekday: 'long' });
         const [emoji] = weatherEmoji(daily.weather_code[i]);
 
-        const card = document.createElement('div');
+        const card = document.createElement('a');
         card.className = 'forecast-card';
+        card.href = `https://www.wunderground.com/hourly/${lat},${lon}/date/${daily.time[i]}`;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
         card.innerHTML = `
           <div class="forecast-day">${dayName}</div>
           <div class="forecast-icon">${emoji}</div>
@@ -492,10 +503,12 @@
       const sections = config.sections || ['media', 'bookmarks'];
 
       let weatherData = null;
+      let lat = null;
+      let lon = null;
       const needsWeather = sections.includes('weather') || sections.includes('forecast');
       if (needsWeather) {
         try {
-          const { latitude: lat, longitude: lon } = await new Promise((resolve, reject) => {
+          const coords = await new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
               reject(new Error('Geolocation not supported'));
               return;
@@ -506,6 +519,8 @@
               { timeout: 10000 }
             );
           });
+          lat = coords.latitude;
+          lon = coords.longitude;
           const res = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
             `&current=temperature_2m,weather_code,apparent_temperature,relative_humidity_2m,precipitation,is_day` +
@@ -527,7 +542,7 @@
             if (weatherData) app.appendChild(renderWeatherSection(weatherData.current));
             break;
           case 'forecast':
-            if (weatherData) app.appendChild(renderForecastSection(weatherData.daily, config.timezone));
+            if (weatherData) app.appendChild(renderForecastSection(weatherData.daily, config.timezone, lat, lon));
             break;
           case 'media':
             app.appendChild(renderMedia());
